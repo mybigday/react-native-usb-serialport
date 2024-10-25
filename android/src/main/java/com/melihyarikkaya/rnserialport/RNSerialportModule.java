@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
@@ -227,7 +228,11 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
     filter.addAction(ACTION_USB_PERMISSION);
     filter.addAction(ACTION_USB_ATTACHED);
     filter.addAction(ACTION_USB_DETACHED);
-    mReactContext.registerReceiver(mUsbReceiver, filter);
+    if (Build.VERSION.SDK_INT >= 34 && mReactContext.getApplicationInfo().targetSdkVersion >= 34) {
+      mReactContext.registerReceiver(mUsbReceiver, filter, Context.RECEIVER_EXPORTED);
+    } else {
+      mReactContext.registerReceiver(mUsbReceiver, filter);
+    }
   }
 
   private void fillDriverList() {
